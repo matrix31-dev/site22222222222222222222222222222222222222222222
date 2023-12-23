@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canlı Sohbet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        #chat-box {
+            border: 1px solid #ccc;
+            padding: 10px;
+            max-height: 300px;
+            overflow-y: scroll;
+        }
+
+        #message-input {
+            width: 80%;
+            padding: 5px;
+        }
+
+        #send-btn {
+            width: 18%;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        /* Ekstra bir stil ekleyerek mesajları görünür hale getirin */
+        .chat-message {
+            display: block;
+            margin-bottom: 5px;
+            overflow: hidden;
+        }
+
+        /* Mesajın görünürlüğü için bir arka plan rengi ve yuvarlak kenarlık ekleyin */
+        .chat-message::before {
+            content: '';
+            display: inline-block;
+            vertical-align: middle;
+            width: 10px;
+            height: 10px;
+            background-color: #3498db;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Canlı Sohbet</h1>
+
+    <div id="chat-box"></div>
+
+    <div>
+        <input type="text" id="message-input" placeholder="Mesajınızı girin">
+        <button id="send-btn" onclick="sendMessage()">Gönder</button>
+    </div>
+
+    <script>
+        const socket = new WebSocket('wss://wastrix.glitch.me');
+
+        socket.addEventListener('message', function (event) {
+            var chatBox = document.getElementById("chat-box");
+            var newMessage = document.createElement("p");
+            newMessage.textContent = event.data;
+            newMessage.classList.add('chat-message'); // Yeni eklenen stil sınıfını ekleyin
+            chatBox.appendChild(newMessage);
+        });
+
+        function sendMessage() {
+            var messageInput = document.getElementById("message-input");
+            var message = messageInput.value;
+            if (message.trim() !== "") {
+                socket.send(message);
+                messageInput.value = "";
+                messageInput.focus();
+            }
+        }
+    </script>
+</body>
+</html>
